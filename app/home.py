@@ -1,20 +1,18 @@
 import streamlit as st 
-import app_utils as vutil 
 import app_component as ac 
+import app.rag_engine as re 
 
 
 st.set_page_config(
-    page_title="菜就多練",
-    page_icon="https://api.dicebear.com/5.x/bottts-neutral/svg?seed=gptLAb"#,
-    #menu_items={"About": "GPT Lab is a user-friendly app that allows anyone to interact with and create their own AI Assistants powered by OpenAI's GPT-3 language model. Our goal is to make AI accessible and easy to use for everyone, so you can focus on designing your Assistant without worrying about the underlying infrastructure.", "Get help": None, "Report a Bug": None}
+    page_title="智慧機器人",
+    page_icon="https://api.dicebear.com/8.x/bottts/svg?seed=gptLAb"
 )
-
 
 
 ac.render_cta()
 
 # copies 
-home_title = "菜就多練"
+home_title = "智慧機器人"
 home_introduction = "請在左側欄位選擇你想詢問的主題"
 home_privacy = "安全"
 
@@ -39,6 +37,41 @@ st.markdown("""\n""")
 st.markdown("""\n""")
 
 st.markdown("#### Get Started")
+
+# Display messages
+if "messages" not in st.session_state:
+    st.session_state.messages = [{"role": "assistant", "content": "想問什麼問題？"}]
+
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.write(message["content"])
+
+# Chat input
+prompt = st.chat_input("在此輸入問題...")
+if prompt:
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    with st.spinner("思考中..."):
+        response_text = re.generate_response()
+        st.session_state.messages.append({"role": "assistant", "content": response_text})
+
+# Clear chat history
+def clear_chat():
+    st.session_state.messages = []
+
+st.sidebar.button("Clear chat", on_click=clear_chat)
+
+st.sidebar.header("Google LLM Settings")
+api_key = st.sidebar.text_input("Enter your Google LLM API Key:")
+
+# 確保 API 金鑰不為空
+if api_key:
+    # 初始化 Google LLM
+    llm_instance = re.Google_llm(api_key=api_key)
+
+    # 在這裡使用 llm_instance 進行後續操作
+    st.success("Google LLM Initialized Successfully!")
+else:
+    st.warning("Please enter your Google LLM API Key.")
 
 
 

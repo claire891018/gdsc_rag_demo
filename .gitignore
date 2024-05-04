@@ -129,6 +129,4 @@ dmypy.json
 .pyre/
 
 app/.streamlit/secrets.toml
-app/.streamlit/dev-firestore.json
-app/.streamlit/prod-firestore.json
 app/.streamlit/key-to-toml.txt

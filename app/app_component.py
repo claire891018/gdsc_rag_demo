@@ -10,7 +10,7 @@ def robo_avatar_component():
     robo_avatar_seed = [0, 'aRoN', 'gptLAb', 180, 'nORa', 'dAVe', 'Julia', 'WEldO', 60]
 
     for i in range(1, 10):
-        avatar_url = "https://api.dicebear.com/5.x/bottts-neutral/svg?seed={0}".format(robo_avatar_seed[i-1])#format((i)*r.randint(0,888))
+        avatar_url = "https://api.dicebear.com/8.x/bottts/svg?seed={0}".format(robo_avatar_seed[i-1])#format((i)*r.randint(0,888))
         robo_html += "<img src='{0}' style='width: {1}px; height: {1}px; margin: 10px;'>".format(avatar_url, 50)
     robo_html += "</div>"
 
