@@ -16,8 +16,12 @@ from langchain.prompts import PromptTemplate
 import streamlit as st
 import app_component as ac 
 
+# 定義全局變數
 TMP_DIR = Path(__file__).resolve().parent.joinpath('data', 'tmp')
 LOCAL_VECTOR_STORE_DIR = Path(__file__).resolve().parent.joinpath('data', 'vector_store')
+
+if not os.path.exists(TMP_DIR):
+    os.makedirs(TMP_DIR)
 
 def load_documents():
     loader = DirectoryLoader(TMP_DIR.as_posix(), glob='**/*.pdf')
@@ -70,7 +74,7 @@ def add_prompt(llm, query):
     return LLMChain(prompt=input_prompt, llm=llm)
 
 def input_fields():
-    st.session_state.source_docs = st.file_uploader(label="Upload Documents", type="pdf", accept_multiple_files=True)
+    st.session_state.source_docs = st.file_uploader(label="上傳文件！", type="pdf", accept_multiple_files=True)
 
 def process_documents():
     if not google_api_key:
