@@ -95,7 +95,7 @@ def process_documents():
 
 def boot():
     input_fields()
-    ac.st_button("上傳文件", on_click=process_documents())
+    st.button("上傳文件", on_click=process_documents())
     if "messages" not in st.session_state:
         st.session_state.messages = []
     for message in st.session_state.messages:
