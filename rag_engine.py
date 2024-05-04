@@ -95,7 +95,7 @@ def process_documents():
 
 def boot():
     input_fields()
-    st.button("上傳文件", on_click=process_documents())
+    ac.st_button("上傳文件", on_click=process_documents())
     if "messages" not in st.session_state:
         st.session_state.messages = []
     for message in st.session_state.messages:
@@ -119,6 +119,7 @@ if __name__ == '__main__':
     st.title("0508 GDSC")
     home_title = "智慧機器人"
     st.markdown(f"""# {home_title} <span style=color:#2E9BF5><font size=5>Beta</font></span>""",unsafe_allow_html=True)
+    ac.robo_avatar_component()
     mode = st.sidebar.radio("LLM type：", ('上傳你的 Google API Key',))
     if mode == '上傳你的 Google API Key':
         google_api_key = st.sidebar.text_input('Google API Key:', type='password')
