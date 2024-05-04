@@ -144,15 +144,14 @@ if __name__ == '__main__':
     file_pdf = st.file_uploader(label="上傳文件！", type="pdf", accept_multiple_files=True)
     boot()
 
+    import pathlib
 
-import pathlib
+    temp_dir = tempfile.TemporaryDirectory()
+    st.write(temp_dir.name)
 
-temp_dir = tempfile.TemporaryDirectory()
-st.write(temp_dir.name)
-
-uploaded_file = st.file_uploader("Upload a file")
-uploaded_file_name = "File_provided"
-uploaded_file_path = pathlib.Path(temp_dir.name) / uploaded_file_name
+    uploaded_file = st.file_uploader("Upload a file")
+    uploaded_file_name = "File_provided"
+    uploaded_file_path = pathlib.Path(temp_dir.name) / uploaded_file_name
 
 
 
