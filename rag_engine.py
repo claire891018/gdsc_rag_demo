@@ -113,11 +113,8 @@ if __name__ == '__main__':
     page_icon="https://api.dicebear.com/8.x/bottts/svg?seed=Felix"
     )
     st.title("0508 GDSC")
-    ac.render_cta()
     home_title = "智慧機器人"
-
     st.markdown(f"""# {home_title} <span style=color:#2E9BF5><font size=5>Beta</font></span>""",unsafe_allow_html=True)
-
     mode = st.sidebar.radio("LLM type：", ('上傳你的 Google API Key',))
     if mode == '上傳你的 Google API Key':
         google_api_key = st.sidebar.text_input('Google API Key:', type='password')
