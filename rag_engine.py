@@ -151,6 +151,10 @@ if __name__ == '__main__':
     if uploaded_file is not None:
         with open(uploaded_file_path, 'wb') as output_temporary_file:
             output_temporary_file.write(uploaded_file.read())
+        documents = load_documents()            
+        texts = split_documents(documents)
+        st.wrtie('processing...')
+        st.session_state.retriever = embeddings_on_local_vectordb(texts)
 
 
 
