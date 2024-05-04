@@ -20,11 +20,8 @@ import app_component as ac
 TMP_DIR = Path(__file__).resolve().parent.joinpath('data', 'tmp')
 LOCAL_VECTOR_STORE_DIR = Path(__file__).resolve().parent.joinpath('data', 'vector_store')
 
-if not os.path.exists(TMP_DIR):
-    os.makedirs(TMP_DIR)
-
 def load_documents():
-    loader = DirectoryLoader(TMP_DIR.as_posix(), glob='**/*.pdf')
+    loader = DirectoryLoader(file_pdf, glob='**/*.pdf')
     documents = loader.load()
     return documents
 
@@ -76,13 +73,13 @@ def add_prompt(llm, query):
 def input_fields():
     st.session_state.source_docs = st.file_uploader(label="上傳文件！", type="pdf", accept_multiple_files=True)
 
-def process_documents():
+def process_document():
     if not google_api_key:
         st.warning(f"請上傳你的 api key！")
     else:
         try:
             for source_doc in st.session_state.source_docs:
-                with tempfile.TemporaryFile(delete=False, dir=TMP_DIR.as_posix(), suffix='.pdf') as tmp_file:
+                with tempfile.NamedTemporaryFile(delete=False, dir=TMP_DIR.as_posix(), suffix='.pdf') as tmp_file:
                     tmp_file.write(source_doc.read())
                 documents = load_documents()
                 for _file in TMP_DIR.iterdir():
@@ -93,8 +90,24 @@ def process_documents():
         except Exception as e:
             st.error(f"An error occurred: {e}")
 
+def process_documents():
+    if not google_api_key:
+        st.warning(f"請上傳你的 api key！")
+    else:
+        try:
+            if file_pdf:
+                with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as tmp_file:
+                    tmp_file.write(file_pdf.read())
+                documents = load_documents()
+                for _file in TMP_DIR.iterdir():
+                    temp_file = TMP_DIR.joinpath(_file)
+                    temp_file.unlink()
+                    texts = split_documents(documents)
+                    st.session_state.retriever = embeddings_on_local_vectordb(texts)
+        except Exception as e:
+            st.error(f"An error occurred: {e}")
+
 def boot():
-    input_fields()
     st.button("上傳文件", on_click=process_documents())
     if "messages" not in st.session_state:
         st.session_state.messages = []
@@ -123,6 +136,8 @@ if __name__ == '__main__':
     mode = st.sidebar.radio("LLM type：", ('上傳你的 Google API Key',))
     if mode == '上傳你的 Google API Key':
         google_api_key = st.sidebar.text_input('Google API Key:', type='password')
+    
+    file_pdf = st.file_uploader(label="上傳文件！", type="pdf", accept_multiple_files=True)
     boot()
 
 
