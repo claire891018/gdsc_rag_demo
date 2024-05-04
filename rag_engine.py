@@ -48,7 +48,7 @@ def embeddings_on_local_vectordb(texts):
 
 def query_llm(retriever, query):
     qa_chain = ConversationalRetrievalChain.from_llm(
-        llm=google_llm(),
+        llm=google_llm(google_api_key),
         retriever=retriever,
         return_source_documents=True,
     )
@@ -58,7 +58,7 @@ def query_llm(retriever, query):
     return result
 
 def query_llm_direct(query):
-    llm_chain = add_prompt(google_llm(), query)
+    llm_chain = add_prompt(google_llm(google_api_key), query)
     result = llm_chain.invoke({"query": query})
     result = result['text']
     st.session_state.messages.append((query, result))
@@ -82,7 +82,7 @@ def process_documents():
     else:
         try:
             for source_doc in st.session_state.source_docs:
-                with tempfile.NamedTemporaryFile(delete=False, dir=TMP_DIR.as_posix(), suffix='.pdf') as tmp_file:
+                with tempfile.TemporaryFile(delete=False, dir=TMP_DIR.as_posix(), suffix='.pdf') as tmp_file:
                     tmp_file.write(source_doc.read())
                 documents = load_documents()
                 for _file in TMP_DIR.iterdir():
