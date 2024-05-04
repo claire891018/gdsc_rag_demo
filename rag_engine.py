@@ -90,10 +90,6 @@ def process_document():
         except Exception as e:
             st.error(f"An error occurred: {e}")
 
-if uploaded_file is not None:
-  with open(uploaded_file_path, 'wb') as output_temporary_file:
-    output_temporary_file.write(uploaded_file.read())
-
 def process_documents():
     if not google_api_key:
         st.warning(f"請上傳你的 api key！")
@@ -152,6 +148,9 @@ if __name__ == '__main__':
     uploaded_file = st.file_uploader("Upload a file")
     uploaded_file_name = "File_provided"
     uploaded_file_path = pathlib.Path(temp_dir.name) / uploaded_file_name
+    if uploaded_file is not None:
+        with open(uploaded_file_path, 'wb') as output_temporary_file:
+            output_temporary_file.write(uploaded_file.read())
 
 
 
