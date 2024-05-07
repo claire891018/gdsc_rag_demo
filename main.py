@@ -3,6 +3,16 @@ import app_component as ac
 
 import utils as u
 
+def process_documents():
+    if not google_api_key:
+        st.warning("請上傳你的 api key！")
+    else:
+        try:
+            texts = u.load_and_chunk(file_pdf)
+            retriver = u.create_embeddings_and_vectordb(texts)
+        except Exception as e:
+            st.error(f"An error occurred: {e}")
+
 def boot():
     st.button("上傳文件", on_click=u.process_documents())
     if "messages" not in st.session_state:

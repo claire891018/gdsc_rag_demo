@@ -9,18 +9,15 @@ from langchain_google_genai import GoogleGenerativeAI
 from langchain.chains import ConversationalRetrievalChain, LLMChain
 from langchain.prompts import PromptTemplate
 
-import main as m
-
-google_api_key = m.google_api_key
-file_pdf = m.file_pdf
 
 def google_llm(google_api_key):
     llm = GoogleGenerativeAI(model="gemini-pro", google_api_key=google_api_key)
     return llm
 
-def query_llm(retriever, query):
+def query_llm(retriever, query, google_api_key):
+    llm = google_llm(google_api_key)
     qa_chain = ConversationalRetrievalChain.from_llm(
-        llm=google_llm(google_api_key),
+        llm=llm,
         retriever=retriever,
         return_source_documents=True,
     )
@@ -29,8 +26,9 @@ def query_llm(retriever, query):
     st.session_state.messages.append((query, result))
     return result
 
-def query_llm_direct(query):
-    llm_chain = add_prompt(google_llm(google_api_key), query)
+def query_llm_direct(query, google_api_key):
+    llm = google_llm(google_api_key)
+    llm_chain = add_prompt(llm, query)
     result = llm_chain.invoke({"query": query})
     result = result['text']
     st.session_state.messages.append((query, result))
