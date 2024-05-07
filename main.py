@@ -16,16 +16,18 @@ from langchain.prompts import PromptTemplate
 def db_retriever(uploaded_file):
     # Load document if file is uploaded
     if uploaded_file is not None:
-        documents = [uploaded_file.read().decode()]
+        loader = PyMuPDFLoader(uploaded_file)
+        documents = loader.load()
         # Split documents into chunks
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=200, chunk_overlap=10)
         texts = text_splitter.create_documents(documents)
+        all_splits = text_splitter.split_documents(documents)
         # Select embeddings
         model_name = "aspire/acge_text_embedding"
         model_kwargs = {'device': 'cpu'}
         embeddings = HuggingFaceEmbeddings(model_name=model_name, model_kwargs=model_kwargs)
         # Create a vectorstore from documents
-        db = Chroma.from_documents(texts, embeddings)
+        db = Chroma.from_documents(all_splits, embeddings)
         # Create retriever interface
         retriever = db.as_retriever()
     
@@ -33,7 +35,7 @@ def db_retriever(uploaded_file):
     
 def boot():    
     # File upload
-    uploaded_file = st.file_uploader('Upload an article', type='txt')
+    uploaded_file = st.file_uploader('請上傳資料', type='pdf')
 
     # Query text
     if "messages" not in st.session_state or st.sidebar.button("清除歷史資料"):
