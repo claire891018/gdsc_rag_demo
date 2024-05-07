@@ -30,16 +30,23 @@ def db_retriever(uploaded_file):
         db = Chroma.from_documents(all_splits, embeddings)
         # Create retriever interface
         retriever = db.as_retriever()
+        st.info("資料解析完成")
     
         return retriever
     
 def boot():    
     # File upload
     uploaded_file = st.file_uploader('請上傳資料', type='pdf')
+    print(uploaded_file)
+    try:
+        retriever = db_retriever(uploaded_file)
+        st.suceess("資料解析完成")
+    except:
+        st.info("資料解析失敗")
 
     # Query text
     if "messages" not in st.session_state or st.sidebar.button("清除歷史資料"):
-        st.session_state["messages"] = [{"role": "assistant", "content": "How can I help you?"}]
+        st.session_state["messages"] = [{"role": "assistant", "content": "請根據資料提問"}]
 
     for msg in st.session_state.messages:
         st.chat_message(msg["role"]).write(msg["content"])
@@ -54,18 +61,19 @@ def boot():
 
         llm = GoogleGenerativeAI(model="gemini-pro", google_api_key=google_api_key)
 
-        prompt = """
+        template = """
         資料：{context}
         你能協助閱讀資料，並且總是能夠立即、準確地回答任何要求。
         請用繁體中文(traditonal chinese)回答下列問題。不知道就回答「資訊未提及：{query}」，並確保答案內容相關且簡潔。
         問題：{query}
         回答：
         """
+        prompt = PromptTemplate.from_template(template=template)
 
         qa_Google = RetrievalQA.from_chain_type(
             llm=llm,
             chain_type="stuff", # can be adjusted
-            retriever=db_retriever(uploaded_file),
+            retriever=retriever,
             return_source_documents=True,
             chain_type_kwargs={"prompt": prompt},
             #verbose=True 控制輸出詳細程度
