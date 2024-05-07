@@ -1,5 +1,5 @@
 import streamlit as st
-import app.component as ac 
+import component as ac 
 
 import streamlit as st
 import tempfile
