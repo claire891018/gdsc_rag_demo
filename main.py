@@ -15,7 +15,7 @@ from langchain.prompts import PromptTemplate
 
 @st.cache(allow_output_mutation=True)
 
-def db_retriever(uploaded_file):
+def generator(uploaded_file, google_api_key, query):
     # Load document if file is uploaded
     if uploaded_file is not None:
         try:
@@ -40,7 +40,28 @@ def db_retriever(uploaded_file):
             db = Chroma.from_documents(all_splits, embeddings, persist_directory="db")
             # Create retriever interface
             retriever = db.as_retriever()
-            return retriever
+            
+            llm = GoogleGenerativeAI(model="gemini-pro", google_api_key=google_api_key)
+            template = """
+            資料：{context}
+            你能協助閱讀資料，並且總是能夠立即、準確地回答任何要求。
+            請用繁體中文(traditonal chinese)回答下列問題。不知道就回答「資訊未提及：{query}」，並確保答案內容相關且簡潔。
+            問題：{query}
+            回答：
+            """
+            prompt = PromptTemplate.from_template(template=template)
+            qa_Google = RetrievalQA.from_chain_type(
+                llm=llm,
+                chain_type="stuff", # can be adjusted
+                retriever=retriever,
+                return_source_documents=True,
+                chain_type_kwargs={"prompt": prompt},
+                #verbose=True 控制輸出詳細程度
+            )
+            result = qa_Google.invoke({"query": query})
+            response = result["result"]
+            return response
+
         except Exception as e:
             st.error(f"資料解析失敗，原因：{e}")
             return None
@@ -48,7 +69,6 @@ def db_retriever(uploaded_file):
 def boot(): 
     # File upload
     uploaded_file = st.file_uploader('請上傳資料', type='pdf')
-    retriever = db_retriever(uploaded_file)
 
     # Query text
     if "messages" not in st.session_state or st.sidebar.button("清除歷史資料"):
@@ -65,29 +85,8 @@ def boot():
             st.warning("請上傳你的 api key！")
             st.stop()
 
-        llm = GoogleGenerativeAI(model="gemini-pro", google_api_key=google_api_key)
-
-        template = """
-        資料：{context}
-        你能協助閱讀資料，並且總是能夠立即、準確地回答任何要求。
-        請用繁體中文(traditonal chinese)回答下列問題。不知道就回答「資訊未提及：{query}」，並確保答案內容相關且簡潔。
-        問題：{query}
-        回答：
-        """
-        prompt = PromptTemplate.from_template(template=template)
-
-        qa_Google = RetrievalQA.from_chain_type(
-            llm=llm,
-            chain_type="stuff", # can be adjusted
-            retriever=retriever,
-            return_source_documents=True,
-            chain_type_kwargs={"prompt": prompt},
-            #verbose=True 控制輸出詳細程度
-        )
-
         with st.chat_message("assistant"):
-            result = qa_Google.invoke({"query": query})
-            response = result["result"]
+            response = generator(uploaded_file, google_api_key, query)
             st.session_state.messages.append({"role": "assistant", "content": response})
             st.write(response)
 
