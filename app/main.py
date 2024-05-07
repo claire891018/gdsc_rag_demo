@@ -118,7 +118,7 @@ for message in st.session_state.msgs:
 # Chat input
 if query := st.chat_input("請輸入問題..."):
     with st.chat_message("user"):
-        st.chat_message("user").write(query)
+        st.write(query)
     st.session_state.msgs.append({"role": "user", "content": query})
     with st.spinner("思考中..."):
         response = qa_Google.invoke({"query": query})
@@ -127,7 +127,7 @@ if query := st.chat_input("請輸入問題..."):
         st.write(answer)
         st.session_state.msgs.append({"role": "assistant", "content": f'{answer}'})
     with st.chat_message("assistant"):
-        st.chat_message("assistant").write(answer)
+        st.write(answer)
 
 # Clear chat history
 def clear_chat():
