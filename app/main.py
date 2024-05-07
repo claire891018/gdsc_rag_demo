@@ -12,6 +12,11 @@ from langchain.chains import RetrievalQA
 from langchain.prompts import PromptTemplate
 from langchain.memory.chat_message_histories import StreamlitChatMessageHistory
 from sentence_transformers import SentenceTransformer
+import pysqlite3
+import sys
+
+__import__('pysqlite3')
+sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
 @st.cache_resource(ttl="1h")
 def configure_retriever(uploaded_files):
