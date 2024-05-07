@@ -130,7 +130,7 @@ if query := st.chat_input("請輸入問題..."):
 
 # Clear chat history
 def clear_chat():
-    st.session_state.knowledge_messages = []
+    st.session_state.msgs = []
 
 st.sidebar.button("Clear chat", on_click=clear_chat)
 
