@@ -42,67 +42,64 @@ def configure_retriever(uploaded_files):
     )
     return retriever  
     
-def boot(): 
-    # File upload
-    uploaded_files = st.sidebar.file_uploader(
-        label="Upload PDF files", type=["pdf"], accept_multiple_files=True
-    )
-    if not uploaded_files:
-        st.info("Please upload PDF documents to continue.")
-        st.stop()
-
-    retriever = configure_retriever(uploaded_files)
-    msgs = StreamlitChatMessageHistory()
-
-    llm = GoogleGenerativeAI(model="gemini-pro", google_api_key=google_api_key)
-    template = """
-        資料：{context}
-        你能協助閱讀資料，並且總是能夠立即、準確地回答任何要求。
-        請用繁體中文(traditonal chinese)回答下列問題。不知道就回答「資訊未提及：{query}」，並確保答案內容相關且簡潔。
-        問題：{query}
-        回答：
-    """
-    prompt = PromptTemplate.from_template(template=template, input_variables=["context", "query"])
-    qa_Google = RetrievalQA.from_chain_type(
-        llm=llm,
-        chain_type="stuff", # can be adjusted
-        retriever=retriever,
-        return_source_documents=True,
-        chain_type_kwargs={"prompt": prompt},
-        #verbose=True 控制輸出詳細程度
-    )
-
-    if len(msgs.messages) == 0 or st.sidebar.button("新對話"):
-        msgs.clear()
-        msgs.add_ai_message("需要什麼協助～")
-
-    avatars = {"human": "user", "ai": "assistant"}
-    for msg in msgs.messages:
-        st.chat_message(avatars[msg.type]).write(msg.content)
-
-    if query := st.chat_input(placeholder="Ask me anything!"):
-        st.chat_message("user").write(query)
-
-        with st.chat_message("assistant"):
-            response = qa_Google({"query": query})
-
-            ## print answer
-            answer = response["result"]
-            st.write(answer)
-
-if __name__ == '__main__':
-    st.set_page_config(
+#### Page ####
+st.set_page_config(
     page_title="智慧機器人",
     page_icon="https://api.dicebear.com/8.x/bottts/svg?seed=Felix"
-    )
+)
     
-    home_title = "0508 GDSC 智慧機器人"
-    st.markdown(f"""# {home_title} <span style=color:#2E9BF5><font size=5>Beta</font></span>""",unsafe_allow_html=True)
-    ac.robo_avatar_component()
-    mode = st.sidebar.radio("LLM type：", ('上傳你的 Google API Key',))
-    if mode == '上傳你的 Google API Key':
-        google_api_key = st.sidebar.text_input('Google API Key:', type='password')
-    boot()
+home_title = "0508 GDSC 智慧機器人"
+st.markdown(f"""# {home_title} <span style=color:#2E9BF5><font size=5>Beta</font></span>""",unsafe_allow_html=True)
+ac.robo_avatar_component()
+mode = st.sidebar.radio("LLM type：", ('上傳你的 Google API Key',))
+if mode == '上傳你的 Google API Key':
+    google_api_key = st.sidebar.text_input('Google API Key:', type='password')
+
+# File upload
+uploaded_files = st.sidebar.file_uploader(
+    label="Upload PDF files", type=["pdf"], accept_multiple_files=True
+)
+if not uploaded_files:
+    st.info("請上傳資料")
+    st.stop()
+
+retriever = configure_retriever(uploaded_files)
+msgs = StreamlitChatMessageHistory()
+
+llm = GoogleGenerativeAI(model="gemini-pro", google_api_key=google_api_key)
+template = """
+    資料：{context}
+    你能協助閱讀資料，並且總是能夠立即、準確地回答任何要求。
+    請用繁體中文(traditonal chinese)回答下列問題。不知道就回答「資訊未提及：{query}」，並確保答案內容相關且簡潔。
+    問題：{query}
+    回答：
+"""
+prompt = PromptTemplate.from_template(template=template, input_variables=["context", "query"])
+qa_Google = RetrievalQA.from_chain_type(
+    llm=llm,
+    chain_type="stuff", # can be adjusted
+    retriever=retriever,
+    return_source_documents=True,
+    chain_type_kwargs={"prompt": prompt},
+    #verbose=True 控制輸出詳細程度
+)
+
+if len(msgs.messages) == 0 or st.sidebar.button("新對話"):
+    msgs.clear()
+    msgs.add_ai_message("需要什麼協助～")
+
+avatars = {"human": "user", "ai": "assistant"}
+for msg in msgs.messages:
+    st.chat_message(avatars[msg.type]).write(msg.content)
+
+if query := st.chat_input(placeholder="Ask me anything!"):
+    st.chat_message("user").write(query)
+
+    with st.chat_message("assistant"):
+        response = qa_Google({"query": query})
+        ## print answer
+        answer = response["result"]
+        st.write(answer)
 
 
 
