@@ -1,7 +1,7 @@
 import streamlit as st
 import component as ac 
 import PyPDF2
-import io
+import os
 
 import streamlit as st
 import tempfile
