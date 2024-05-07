@@ -19,9 +19,9 @@ from langchain.prompts import PromptTemplate
 def db_retriever(uploaded_file):
     # Load document if file is uploaded
     if uploaded_file is not None:
-        bytes_io = io.BytesIO(uploaded_file.getvalue())
-        loader = PyPDF2.PdfReader(bytes_io)
-        # loader = PyMuPDFLoader(uploaded_file.name)
+        # bytes_io = io.BytesIO(uploaded_file.getvalue())
+        # loader = PyPDF2.PdfReader(bytes_io)
+        loader = PyMuPDFLoader(uploaded_file.name)
         documents = loader.load()
         
         # Split documents into chunks
@@ -40,7 +40,8 @@ def db_retriever(uploaded_file):
     
         return retriever
     
-def boot():    
+def boot(): 
+    st.warning("請上傳你的 api key！")
     # File upload
     uploaded_file = st.file_uploader('請上傳資料', type='pdf')
     try:
