@@ -19,11 +19,15 @@ def generator(uploaded_file, google_api_key, query):
     # Load document if file is uploaded
     if uploaded_file is not None:
         try:
-            temp_file = "./temp.pdf"
-            with open(temp_file, "wb") as file:
-               file.write(uploaded_file.getvalue())
-               file_name = uploaded_file.name
-            loader = PyPDFLoader(temp_file)
+            temp_dir = tempfile.mkdtemp()
+            path = os.path.join(temp_dir, uploaded_file.name)
+            with open(path, "wb") as f:
+                f.write(uploaded_file.getvalue())
+            #temp_file = "./temp.pdf"
+            #with open(temp_file, "wb") as file:
+            #   file.write(uploaded_file.getvalue())
+            #   file_name = uploaded_file.name
+            loader = PyPDFLoader(path)
             #loader = PyMuPDFLoader(uploaded_file.name)
             documents = loader.load()
         
