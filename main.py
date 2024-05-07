@@ -31,7 +31,6 @@ if __name__ == '__main__':
     mode = st.sidebar.radio("LLM type：", ('上傳你的 Google API Key',))
     if mode == '上傳你的 Google API Key':
         google_api_key = st.sidebar.text_input('Google API Key:', type='password')
-    temp_file = st.sidebar.text_input('Google API Key:', type='password')
     
     file_pdf = st.file_uploader(label="上傳文件！", type="pdf", accept_multiple_files=True)
     boot()
