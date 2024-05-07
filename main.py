@@ -14,7 +14,8 @@ def process_documents():
             for source_doc in st.session_state.source_docs:
                 texts = u.load_and_chunk(source_doc)
                 st.session_state.retriever = u.create_embeddings_and_vectordb(texts)
-            st.success("資料處理完成，歡迎提問！")
+            if "retriever" in st.session_state:
+                st.success("資料處理完成，歡迎提問！")
         except Exception as e:
             st.error(f"An error occurred: {e}")
 
