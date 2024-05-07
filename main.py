@@ -29,7 +29,7 @@ def generator(uploaded_file, google_api_key, query):
             #   file_name = uploaded_file.name
             loader = PyPDFLoader(path)
             #loader = PyMuPDFLoader(uploaded_file.name)
-            documents = loader.load()
+            documents = loader.load_and_split()
         
             # Split documents into chunks
             text_splitter = RecursiveCharacterTextSplitter(chunk_size=200, chunk_overlap=10)
