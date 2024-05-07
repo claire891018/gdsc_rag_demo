@@ -41,7 +41,6 @@ def db_retriever(uploaded_file):
             db = Chroma.from_documents(all_splits, embeddings, persist_directory="db")
             # Create retriever interface
             retriever = db.as_retriever()
-            st.suceess("資料解析完成")
             return retriever
         except:
             return st.info(f"資料解析失敗，{uploaded_file}")
@@ -49,6 +48,7 @@ def db_retriever(uploaded_file):
 def boot(): 
     # File upload
     uploaded_file = st.file_uploader('請上傳資料', type='pdf')
+    retriever = db_retriever(uploaded_file)
 
     # Query text
     if "messages" not in st.session_state or st.sidebar.button("清除歷史資料"):
