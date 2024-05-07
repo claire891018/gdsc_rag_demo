@@ -33,7 +33,6 @@ def generator(uploaded_file, google_api_key, query):
         
             # Split documents into chunks
             text_splitter = RecursiveCharacterTextSplitter(chunk_size=200, chunk_overlap=10)
-            texts = text_splitter.create_documents(documents)
             all_splits = text_splitter.split_documents(documents)
             
             # Select embeddings
