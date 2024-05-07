@@ -24,9 +24,9 @@ import app_component as ac
 import utils as u
 
 # 資料暫存資料夾
-temp_file = st.secrets["path"]
-TMP_DIR = Path(__file__).resolve().parent.joinpath('data', 'tmp')
-LOCAL_VECTOR_STORE_DIR = Path(__file__).resolve().parent.joinpath('data', 'vector_store')
+#temp_file = st.secrets["path"]
+#TMP_DIR = Path(__file__).resolve().parent.joinpath('data', 'tmp')
+#LOCAL_VECTOR_STORE_DIR = Path(__file__).resolve().parent.joinpath('data', 'vector_store')
 
 def load_documents():
     loader = DirectoryLoader(file_pdf, glob='**/*.pdf')
