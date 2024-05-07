@@ -79,7 +79,7 @@ template = """
     問題：{query}
     回答：
 """
-prompt = PromptTemplate.from_template(template=template, input_variables=["context", "query"])
+prompt = PromptTemplate.from_template(template=template)
 qa_Google = RetrievalQA.from_chain_type(
     llm=llm,
     chain_type="stuff", # can be adjusted
