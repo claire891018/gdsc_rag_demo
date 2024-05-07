@@ -69,8 +69,6 @@ if not uploaded_files:
     st.stop()
 
 retriever = configure_retriever(uploaded_files)
-msgs = StreamlitChatMessageHistory()
-
 llm = GoogleGenerativeAI(model="gemini-pro", google_api_key=google_api_key)
 template = """
     資料：{context}
@@ -88,6 +86,9 @@ qa_Google = RetrievalQA.from_chain_type(
     chain_type_kwargs={"prompt": prompt},
     #verbose=True 控制輸出詳細程度
 )
+old = """
+msgs = StreamlitChatMessageHistory()
+
 if len(msgs.messages) == 0 or st.sidebar.button("新對話"):
     msgs.clear()
     msgs.add_ai_message("需要什麼協助～")
@@ -104,6 +105,36 @@ if query := st.chat_input(placeholder="Ask me anything!"):
         ## print answer
         answer = response["result"]
         st.write(answer)
+"""
+
+# Display messages
+if "msgs" not in st.session_state:
+    st.session_state.msgs = [{"role": "assistant", "content": "你好，歡迎詢問有關ㄉ問題！"}]
+
+for message in st.session_state.msgs:
+    with st.chat_message(message["role"]):
+        st.write(message["content"])
+
+# Chat input
+if query := st.chat_input("請輸入問題..."):
+    with st.chat_message("user"):
+        st.chat_message("user").write(query)
+    st.session_state.msgs.append({"role": "user", "content": query})
+    with st.spinner("思考中..."):
+        response = qa_Google.invoke({"query": query})
+        ## print answer
+        answer = response["result"]
+        st.write(answer)
+        st.session_state.msgs.append({"role": "assistant", "content": f'{answer}'})
+    with st.chat_message("assistant"):
+        st.chat_message("assistant").write(answer)
+
+# Clear chat history
+def clear_chat():
+    st.session_state.knowledge_messages = []
+
+st.sidebar.button("Clear chat", on_click=clear_chat)
+
 
 
 
