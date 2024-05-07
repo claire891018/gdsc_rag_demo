@@ -86,7 +86,8 @@ def boot():
         )
 
         with st.chat_message("assistant"):
-            response = qa_Google.invoke({"query": query})
+            result = qa_Google.invoke({"query": query})
+            response = result["result"]
             st.session_state.messages.append({"role": "assistant", "content": response})
             st.write(response)
 
