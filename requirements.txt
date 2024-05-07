@@ -8,3 +8,4 @@ sentence-transformers
 langchain-community
 langchain-google-genai
 pymupdf
+PyPDF2
