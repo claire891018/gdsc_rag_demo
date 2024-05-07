@@ -75,8 +75,8 @@ llm = GoogleGenerativeAI(model="gemini-pro", google_api_key=google_api_key)
 template = """
     資料：{context}
     你能協助閱讀資料，並且總是能夠立即、準確地回答任何要求。
-    請用繁體中文(traditonal chinese)回答下列問題。不知道就回答「資訊未提及：{query}」，並確保答案內容相關且簡潔。
-    問題：{query}
+    請用繁體中文(traditonal chinese)回答下列問題。不知道就回答「資訊未提及：{question}」，並確保答案內容相關且簡潔。
+    問題：{question}
     回答：
 """
 prompt = PromptTemplate.from_template(template=template)
