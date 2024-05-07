@@ -3,6 +3,8 @@ import app_component as ac
 
 import utils as u
 
+def input_fields():
+    st.session_state.source_docs = st.file_uploader(label="上傳文件！", type="pdf", accept_multiple_files=True)
 
 def process_documents():
     if not google_api_key:
@@ -37,15 +39,15 @@ if __name__ == '__main__':
     page_title="智慧機器人",
     page_icon="https://api.dicebear.com/8.x/bottts/svg?seed=Felix"
     )
-    st.title("0508 GDSC")
-    home_title = "智慧機器人"
+    
+    home_title = "0508 GDSC 智慧機器人"
     st.markdown(f"""# {home_title} <span style=color:#2E9BF5><font size=5>Beta</font></span>""",unsafe_allow_html=True)
     ac.robo_avatar_component()
     mode = st.sidebar.radio("LLM type：", ('上傳你的 Google API Key',))
     if mode == '上傳你的 Google API Key':
         google_api_key = st.sidebar.text_input('Google API Key:', type='password')
-    
-    file_pdf = st.file_uploader(label="上傳文件！", type="pdf", accept_multiple_files=True)
+    input_fields()
+    #file_pdf = st.file_uploader(label="上傳文件！", type="pdf", accept_multiple_files=True)
     boot()
 
 

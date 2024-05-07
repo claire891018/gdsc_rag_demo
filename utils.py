@@ -45,9 +45,6 @@ def add_prompt(llm, query):
     input_prompt = PromptTemplate(input_variables=["query"], template=init_Prompt)
     return LLMChain(prompt=input_prompt, llm=llm)
 
-def input_fields():
-    st.session_state.source_docs = st.file_uploader(label="上傳文件！", type="pdf", accept_multiple_files=True)
-
 def load_and_chunk(file_path):
     loader = DirectoryLoader(file_path, glob='**/*.pdf')
     documents = loader.load()
