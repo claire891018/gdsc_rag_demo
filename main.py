@@ -1,5 +1,7 @@
 import streamlit as st
 import component as ac 
+import PyPDF2
+import io
 
 import streamlit as st
 import tempfile
@@ -11,17 +13,22 @@ from langchain_google_genai import GoogleGenerativeAI
 from langchain.chains import RetrievalQA
 from langchain.prompts import PromptTemplate
 
+
 @st.cache_data
 
 def db_retriever(uploaded_file):
     # Load document if file is uploaded
     if uploaded_file is not None:
-        loader = PyMuPDFLoader(uploaded_file)
+        bytes_io = io.BytesIO(uploaded_file.getvalue())
+        loader = PyPDF2.PdfReader(bytes_io)
+        # loader = PyMuPDFLoader(uploaded_file.name)
         documents = loader.load()
+        
         # Split documents into chunks
         text_splitter = RecursiveCharacterTextSplitter(chunk_size=200, chunk_overlap=10)
         texts = text_splitter.create_documents(documents)
         all_splits = text_splitter.split_documents(documents)
+        
         # Select embeddings
         model_name = "aspire/acge_text_embedding"
         model_kwargs = {'device': 'cpu'}
