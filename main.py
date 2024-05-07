@@ -2,8 +2,6 @@ import streamlit as st
 import component as ac 
 import PyPDF2
 import os
-
-import streamlit as st
 import tempfile
 from langchain.document_loaders import PyMuPDFLoader, PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
