@@ -62,14 +62,3 @@ def create_embeddings_and_vectordb(texts):
     vectordb = Chroma.from_documents(texts, embedding=embeddings)
     retriver = vectordb.as_retriever(search_kwargs={'k': 7})
     return retriver
-
-# 處理文件
-def process_documents():
-    if not google_api_key:
-        st.warning("請上傳你的 api key！")
-    else:
-        try:
-            texts = load_and_chunk(file_pdf)
-            retriver = create_embeddings_and_vectordb(texts)
-        except Exception as e:
-            st.error(f"An error occurred: {e}")
