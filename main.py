@@ -5,7 +5,7 @@ import io
 
 import streamlit as st
 import tempfile
-from langchain.document_loaders import PyMuPDFLoader
+from langchain.document_loaders import PyMuPDFLoader, PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
@@ -19,38 +19,36 @@ from langchain.prompts import PromptTemplate
 def db_retriever(uploaded_file):
     # Load document if file is uploaded
     if uploaded_file is not None:
-        # bytes_io = io.BytesIO(uploaded_file.getvalue())
-        # loader = PyPDF2.PdfReader(bytes_io)
-        with open(uploaded_file.name, mode='wb') as w:
-            w.write(uploaded_file.getvalue())
-        loader = PyMuPDFLoader(uploaded_file.name)
-        documents = loader.load()
+        try:
+            temp_file = "./temp.pdf"
+            with open(temp_file, "wb") as file:
+               file.write(uploaded_file.getvalue())
+               file_name = uploaded_file.name
+            loader = PyPDFLoader(temp_file)
+            #loader = PyMuPDFLoader(uploaded_file.name)
+            documents = loader.load()
         
-        # Split documents into chunks
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=200, chunk_overlap=10)
-        texts = text_splitter.create_documents(documents)
-        all_splits = text_splitter.split_documents(documents)
-        
-        # Select embeddings
-        model_name = "aspire/acge_text_embedding"
-        model_kwargs = {'device': 'cpu'}
-        embeddings = HuggingFaceEmbeddings(model_name=model_name, model_kwargs=model_kwargs)
-        # Create a vectorstore from documents
-        db = Chroma.from_documents(all_splits, embeddings)
-        # Create retriever interface
-        retriever = db.as_retriever()
-    
-        return retriever
+            # Split documents into chunks
+            text_splitter = RecursiveCharacterTextSplitter(chunk_size=200, chunk_overlap=10)
+            texts = text_splitter.create_documents(documents)
+            all_splits = text_splitter.split_documents(documents)
+            
+            # Select embeddings
+            model_name = "aspire/acge_text_embedding"
+            model_kwargs = {'device': 'cpu'}
+            embeddings = HuggingFaceEmbeddings(model_name=model_name, model_kwargs=model_kwargs)
+            # Create a vectorstore from documents
+            db = Chroma.from_documents(all_splits, embeddings, persist_directory="db")
+            # Create retriever interface
+            retriever = db.as_retriever()
+            st.suceess("資料解析完成")
+            return retriever
+        except:
+            return st.info(f"資料解析失敗，{uploaded_file}")
     
 def boot(): 
-    st.warning("請上傳你的 api key！")
     # File upload
     uploaded_file = st.file_uploader('請上傳資料', type='pdf')
-    try:
-        retriever = db_retriever(uploaded_file)
-        st.suceess("資料解析完成")
-    except:
-        st.info(f"資料解析失敗，{uploaded_file}")
 
     # Query text
     if "messages" not in st.session_state or st.sidebar.button("清除歷史資料"):
