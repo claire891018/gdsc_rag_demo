@@ -1,7 +1,7 @@
 # 套件導入
 import streamlit as st
 import tempfile
-from langchain_community.document_loaders import DirectoryLoader
+from langchain.document_loaders import PyMuPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
@@ -45,8 +45,8 @@ def add_prompt(llm, query):
     input_prompt = PromptTemplate(input_variables=["query"], template=init_Prompt)
     return LLMChain(prompt=input_prompt, llm=llm)
 
-def load_and_chunk(file_path):
-    loader = DirectoryLoader(file_path, glob='**/*.pdf')
+def load_(file_path):
+    loader = PyMuPDFLoader(file_path, glob='**/*.pdf')
     documents = loader.load()
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=200, chunk_overlap=10)
     texts = text_splitter.split_documents(documents)
@@ -65,7 +65,7 @@ def load_and_chunk(uploaded_file):
         temp_file.write(uploaded_file.getvalue())
         temp_file_path = temp_file.name
 
-    loader = DirectoryLoader(temp_file_path, glob='**/*.pdf')
+    loader = PyMuPDFLoader(temp_file_path, glob='**/*.pdf')
     documents = loader.load()
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=200, chunk_overlap=10)
     texts = text_splitter.split_documents(documents)
