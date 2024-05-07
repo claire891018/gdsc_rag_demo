@@ -1,6 +1,6 @@
 import streamlit as st 
 import app_component as ac 
-import rag_engine as re 
+import main as re 
 
 
 st.set_page_config(
