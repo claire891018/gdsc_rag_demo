@@ -128,5 +128,4 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-app/.streamlit/secrets.toml
-app/.streamlit/key-to-toml.txt
+.streamlit/secrets.toml
