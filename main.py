@@ -21,6 +21,8 @@ def db_retriever(uploaded_file):
     if uploaded_file is not None:
         # bytes_io = io.BytesIO(uploaded_file.getvalue())
         # loader = PyPDF2.PdfReader(bytes_io)
+        with open(uploaded_file.name, mode='wb') as w:
+            w.write(uploaded_file.getvalue())
         loader = PyMuPDFLoader(uploaded_file.name)
         documents = loader.load()
         
