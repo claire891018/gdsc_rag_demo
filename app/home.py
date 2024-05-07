@@ -1,6 +1,6 @@
 import streamlit as st 
 import app_component as ac 
-import main as re 
+import app.main as re 
 
 
 st.set_page_config(
