@@ -88,7 +88,6 @@ qa_Google = RetrievalQA.from_chain_type(
     chain_type_kwargs={"prompt": prompt},
     #verbose=True 控制輸出詳細程度
 )
-
 if len(msgs.messages) == 0 or st.sidebar.button("新對話"):
     msgs.clear()
     msgs.add_ai_message("需要什麼協助～")
