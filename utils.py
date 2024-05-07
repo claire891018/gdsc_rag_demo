@@ -46,7 +46,7 @@ def add_prompt(llm, query):
     return LLMChain(prompt=input_prompt, llm=llm)
 
 def load_(file_path):
-    loader = PyMuPDFLoader(file_path, glob='**/*.pdf')
+    loader = PyMuPDFLoader(file_path)
     documents = loader.load()
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=200, chunk_overlap=10)
     texts = text_splitter.split_documents(documents)
@@ -65,7 +65,7 @@ def load_and_chunk(uploaded_file):
         temp_file.write(uploaded_file.getvalue())
         temp_file_path = temp_file.name
 
-    loader = PyMuPDFLoader(temp_file_path, glob='**/*.pdf')
+    loader = PyMuPDFLoader(temp_file_path)
     documents = loader.load()
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=200, chunk_overlap=10)
     texts = text_splitter.split_documents(documents)
