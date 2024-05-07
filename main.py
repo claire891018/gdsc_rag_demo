@@ -13,8 +13,7 @@ from langchain_google_genai import GoogleGenerativeAI
 from langchain.chains import RetrievalQA
 from langchain.prompts import PromptTemplate
 
-
-@st.cache_data
+@st.cache(allow_output_mutation=True)
 
 def db_retriever(uploaded_file):
     # Load document if file is uploaded
@@ -42,8 +41,9 @@ def db_retriever(uploaded_file):
             # Create retriever interface
             retriever = db.as_retriever()
             return retriever
-        except:
-            return st.info(f"資料解析失敗，{uploaded_file}")
+        except Exception as e:
+            st.error(f"資料解析失敗，原因：{e}")
+            return None
     
 def boot(): 
     # File upload
