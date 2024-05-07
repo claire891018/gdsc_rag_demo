@@ -100,7 +100,7 @@ if query := st.chat_input(placeholder="Ask me anything!"):
     st.chat_message("user").write(query)
 
     with st.chat_message("assistant"):
-        response = qa_Google({"query": query})
+        response = qa_Google.invoke({"query": query})
         ## print answer
         answer = response["result"]
         st.write(answer)
