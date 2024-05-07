@@ -11,6 +11,7 @@ from langchain_google_genai import GoogleGenerativeAI
 from langchain.chains import RetrievalQA
 from langchain.prompts import PromptTemplate
 from langchain.memory.chat_message_histories import StreamlitChatMessageHistory
+from sentence_transformers import SentenceTransformer
 
 @st.cache_resource(ttl="1h")
 def configure_retriever(uploaded_files):
@@ -29,7 +30,10 @@ def configure_retriever(uploaded_files):
     splits = text_splitter.split_documents(docs)
 
     # create embeddings and store in vectordb
-    embeddings = HuggingFaceEmbeddings(model_name="BAAI/bge-large-en-v1.5")
+    model_name = "aspire/acge_text_embedding"
+    model_kwargs = {'device': 'cpu'}
+    embeddings = HuggingFaceEmbeddings(model_name=model_name,
+                                      model_kwargs=model_kwargs)
     vectordb = Chroma.from_documents(splits, embeddings)
 
     # define retriever
