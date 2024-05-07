@@ -62,3 +62,14 @@ def create_embeddings_and_vectordb(texts):
     vectordb = Chroma.from_documents(texts, embedding=embeddings)
     retriver = vectordb.as_retriever(search_kwargs={'k': 7})
     return retriver
+
+def load_and_chunk(uploaded_file):
+    with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp_file:
+        temp_file.write(uploaded_file.getvalue())
+        temp_file_path = temp_file.name
+
+    loader = DirectoryLoader(temp_file_path, glob='**/*.pdf')
+    documents = loader.load()
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=200, chunk_overlap=10)
+    texts = text_splitter.split_documents(documents)
+    return texts
