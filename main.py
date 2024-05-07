@@ -3,14 +3,15 @@ import app_component as ac
 
 import utils as u
 
+
 def process_documents():
     if not google_api_key:
         st.warning("請上傳你的 api key！")
     else:
         try:
-            for uploaded_file in files:
-                texts = u.load_and_chunk(uploaded_file)
-                retriever = u.create_embeddings_and_vectordb(texts)
+            for source_doc in st.session_state.source_docs:
+                texts = u.load_and_chunk(source_doc)
+                st.session_state.retriever = u.create_embeddings_and_vectordb(texts)
         except Exception as e:
             st.error(f"An error occurred: {e}")
 
