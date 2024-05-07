@@ -3,7 +3,7 @@ import app_component as ac
 
 import utils as u
 
-def process_documents(google_api_key, files):
+def process_documents():
     if not google_api_key:
         st.warning("請上傳你的 api key！")
     else:
